@@ -117,7 +117,7 @@ int U_format(int opcode,char* operands[])
       return instruction;
 }
 
-int main()
+/*int main()
 {
     char* st[3] = {"x1","62"};
     unsigned int ins = U_format(0x33,st);
@@ -127,5 +127,5 @@ int main()
     unsigned int test = I_format(0x3, 0x0, field );
     printf("0x%08X",test ); 
  }
-
+*/
 

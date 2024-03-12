@@ -24,30 +24,37 @@ char * binaryToHex(char *binaryString) {
 
     // Print the hexadecimal string
     printf("Hexadecimal representation: 0x%s\n", hexString);
+    return 0;
 }
 
-int parse_instructions(FILE *file)
+int parse_instructions(const char *file_m)
 {
     char line[100];
     int output = 0;
     // Open the assembly file
-    file = fopen("assembly.s", "r");
+    FILE* file = fopen(file_m, "r");
     if (file == NULL) {
-        printf("Error opening file.\n");
+        printf("Error opening file2.\n");
         return 1;
     }
+    else 
+    printf("file in parse_instructions opened\n");
     
     while (fgets(line, sizeof(line), file)) // Read each line from the file
      {
+        printf("%s\n",line);
         char *token = strtok(line, " \t\n"); // Tokenize the line
+         //   printf("%s",token);
         if (token != NULL)
          {
-            if (strcmp(token, ".text") == 1) 
-                continue; 
+            printf("%s\t--\n",token);
+            if (strcmp(token, "and") == 0) {
+               printf("end\n");
+                break; 
+            }
             
          }
-         else
-            break;
+        
                     // Skip till the .text section header
     }
      while (fgets(line, sizeof(line), file)) // Read each line from the file
@@ -70,22 +77,25 @@ int parse_instructions(FILE *file)
             }          
         
         Machine_Code(operation) ;
-       // printf("%s %s %s",operation,operands[0],operands[1]);
-        if(format = 'r'){
+
+       printf("%s %s %s %c\n\n",operation,operands[0],operands[1],format);
+        if(format == 'r'){
             output = R_format(opcode_bin, fun3_bin, fun7_bin, operands);
         }
-        else if(format = 'i'){
+        else if(format == 'i'){
             output = I_format(opcode_bin, fun3_bin, operands);   
         }
-        else if(format = 's'){
+        else if(format == 's'){
             output = S_format(opcode_bin, fun3_bin, operands);
         }
-        else if(format = 'u'){
+        else if(format == 'u'){
             output = U_format(opcode_bin, operands);
         }
+        printf("0x%08X",output);
      PC +=4;
     }}
 }
+return 0;
 }
 
 
@@ -294,12 +304,14 @@ void Machine_Code(char * opcode)
 }
 
 
-/*int main() {
+int main() {
     
     // Open the assembly file
-    FILE *riscv_file = fopen("test.asm", "r");
+  /*  FILE *riscv_file = fopen("test.asm", "r");
     if (riscv_file == NULL) {
         printf("Error: Unable to open RISC-V file\n");
     }
-   int a = parse_instructions(riscvfile);
-}*/
+    else
+    printf("file opened\n");*/
+   int a = parse_instructions("test.asm");
+}
