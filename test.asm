@@ -1,9 +1,9 @@
-.data
-abc: .word 1,2,33,678,234
-hello world
+
 
 .text
 and x3,x4,x5
-sub x1,x2,x3
+#abd
 
+sub x1,x2,x4
+jal x1,
 
