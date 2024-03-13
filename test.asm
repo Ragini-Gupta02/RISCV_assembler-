@@ -15,4 +15,6 @@ lui x3,1234
 jal x21,label
 label:
 
+sub x1,x2,x4
+jal x1,
 
