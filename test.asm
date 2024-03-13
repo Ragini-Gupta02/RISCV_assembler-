@@ -1,9 +1,18 @@
+
 .data
+
 abc: .word 1,2,33,678,234
 hello world
 
 .text
-and x3,x4,x5
-sub x1,x2,x3
+
+and x31,x14,x21
+sub x12,x22,x23
+addi x11,x21,100
+lw x13,98(x21)
+sb x25,0(x17)
+lui x3,1234
+jal x21,label
+label:
 
 

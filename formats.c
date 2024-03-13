@@ -3,25 +3,29 @@
 #include <string.h>
 
 unsigned int I_format(int opcode, int fun3, char *operand[]){
- char rd[3]; 
- char rs1[3];
+ char rd[10]; 
+ char rs1[10];
  int rd_val;
  int rs1_val;
  int imm_val;
 
+ //printf("%s %s %s\n",operand[0],operand[1],operand[2]);
 strncpy(rd, operand[0]+1, strlen(operand[0])-1);
 rd_val = atoi(rd);
 
 if(opcode == 0x3){
     imm_val = atoi(operand[1]);
-    strncpy(rs1, operand[2]+1, strlen(operand[0])-1);
+    strncpy(rs1, operand[2]+1, strlen(operand[2])-1);
+    //printf("%s",rs1);
     rs1_val = atoi(rs1);
 }
    else{
-    strncpy(rs1, operand[1]+1, strlen(operand[0])-1);
+    strncpy(rs1, operand[1]+1, strlen(operand[1])-1);
+  //   printf("%s",rs1);
     rs1_val = atoi(rs1);
     imm_val = atoi(operand[2]);
    } 
+  // printf("%d %d\n\n",rd_val,rs1_val);
  unsigned int instruction = 0;
  instruction |= (imm_val & 0xfff) << 20;   //bits 31-20
  instruction |= (rs1_val & 0x1f) << 15;     //bits 19-15
@@ -85,10 +89,9 @@ int S_format(int opcode, int fun3, char* operands[])
     instruction |= opcode & 0x7F;                   //Generating Machine Code
     instruction |= (imm_val & 0x1F) << 7;
     instruction |= (fun3 & 0x7) << 12;
-    instruction |= (rs1_val & 0x1F) << 15;
-    instruction |= (rs2_val & 0x1F) << 20;
+    instruction |= (rs2_val & 0x1F) << 15;
+    instruction |= (rs1_val & 0x1F) << 20;
     instruction |= ((imm_val & 0xFE0)>>5) << 25;
-   // printf("%d\n",imm_val);
     return instruction;
 }
 

@@ -11,8 +11,9 @@
     int PC=0;
 
 void Machine_Code(char * opcode);
+
 // Function to convert binary string to hexadecimal
-char * binaryToHex(char *binaryString) {
+/*char * binaryToHex(char *binaryString) {
     char hexString[9]; // Hexadecimal string will be at most 8 characters long (4 bits per hex digit) + null terminator
     unsigned int decimalValue;
 
@@ -25,31 +26,37 @@ char * binaryToHex(char *binaryString) {
     // Print the hexadecimal string
     printf("Hexadecimal representation: 0x%s\n", hexString);
     return 0;
-}
+}*/
 
-int parse_instructions(const char *file_m)
+int parse_instructions(const char *file_r,const char *file_w)
 {
     char line[100];
     int output = 0;
     // Open the assembly file
-    FILE* file = fopen(file_m, "r");
-    if (file == NULL) {
-        printf("Error opening file2.\n");
+    FILE* r_file = fopen(file_r, "r");
+    if (r_file == NULL) {
+        printf("Error opening read file\n");
         return 1;
     }
     else 
-    printf("file in parse_instructions opened\n");
+    printf("Read file in parse_instructions opened\n");
     
-    while (fgets(line, sizeof(line), file)) // Read each line from the file
+     FILE* w_file = fopen(file_w, "w");
+     if (w_file == NULL) {
+        printf("Error opening write file\n");
+        return 1;
+     }
+
+    while (fgets(line, sizeof(line), r_file)) // Read each line from the file
      {
-        printf("%s\n",line);
+        printf("%s",line);
         char *token = strtok(line, " \t\n"); // Tokenize the line
          //   printf("%s",token);
         if (token != NULL)
          {
-            printf("%s\t--\n",token);
-            if (strcmp(token, "and") == 0) {
-               printf("end\n");
+          //  printf("%s\t--\n",token);
+            if (strstr(token, "text") != NULL) {
+            //   printf("end\n");
                 break; 
             }
             
@@ -57,8 +64,12 @@ int parse_instructions(const char *file_m)
         
                     // Skip till the .text section header
     }
-     while (fgets(line, sizeof(line), file)) // Read each line from the file
+    fprintf(w_file,"Machine Code\t\tPC\n");
+     while (fgets(line, sizeof(line), r_file)) // Read each line from the file
      {
+         printf("%s",line);
+         //char* buff = line;
+        //fprintf(w_file,"%s\t\t",line);
         char *token = strtok(line, " ,()\t\n"); // Tokenize the line
         char operation[20];
         char *operands[MAX_LINE_LENGTH]; // Initialize to empty string
@@ -78,7 +89,7 @@ int parse_instructions(const char *file_m)
         
         Machine_Code(operation) ;
 
-       printf("%s %s %s %c\n\n",operation,operands[0],operands[1],format);
+     //  printf("%s %s %s %s -%c\n",operation,operands[0],operands[1],operands[2],format);
         if(format == 'r'){
             output = R_format(opcode_bin, fun3_bin, fun7_bin, operands);
         }
@@ -91,10 +102,20 @@ int parse_instructions(const char *file_m)
         else if(format == 'u'){
             output = U_format(opcode_bin, operands);
         }
-        printf("0x%08X",output);
+
+        printf("0x%08X\t",output);
+        printf("0x%08X\n\n",PC);
+       // printf("%s\n\n",line);
+        fprintf(w_file,"0x%08X\t\t",output);
+        fprintf(w_file,"0x%08X\n\n",PC);
+     //   fprintf(w_file,"%s\n\n",buff);
+   
      PC +=4;
+
     }}
 }
+fclose(r_file);
+fclose(w_file);
 return 0;
 }
 
@@ -313,5 +334,6 @@ int main() {
     }
     else
     printf("file opened\n");*/
-   int a = parse_instructions("test.asm");
+   int a = parse_instructions("test.asm","output.mc");
+  
 }
