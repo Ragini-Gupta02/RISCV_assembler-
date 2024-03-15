@@ -22,7 +22,7 @@ void checkAssemblyErrors(FILE *assemblyFile) {
             //printf("%s \n",token);
         if (token != NULL)
         {
-            if (strcmp(token, ".text") == 0)
+            if (strstr(token, "text") != 0)
                 break; 
         }
         // Skip till the .text section header
