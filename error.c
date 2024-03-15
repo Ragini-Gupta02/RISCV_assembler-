@@ -40,7 +40,7 @@ void checkAssemblyErrors(FILE *assemblyFile) {
 
         // Tokenize line to extract opcode and operands
         char *token = strtok(line, " ,\t\n");
-        if (token == NULL || strchr(token, '#') != NULL) // Ignore empty lines or comments
+        if (token == NULL || strchr(token, '#') || strchr(token, ':') != NULL) // Ignore empty lines or comments
             continue;
 
         // Check if opcode is valid
@@ -61,23 +61,15 @@ void checkAssemblyErrors(FILE *assemblyFile) {
             strcmp(token, "or") == 0 || strcmp(token, "sll") == 0 || strcmp(token, "slt") == 0 ||
             strcmp(token, "sra") == 0 || strcmp(token, "srl") == 0 || strcmp(token, "xor") == 0 || 
             strcmp(token, "mul") == 0 || strcmp(token, "div") == 0 || strcmp(token, "rem") == 0) {
-            token = strtok(NULL, " ,\t\n");
-            if (token == NULL) {
-                fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
-                exit(EXIT_FAILURE);
-            }
-            token = strtok(NULL, " ,\t\n");
-            if (token == NULL) {
-                fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
-                exit(EXIT_FAILURE);
-            }
-            token = strtok(NULL, " ,\t\n");
-            if (token == NULL) {
-                fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
-                exit(EXIT_FAILURE);
+            for(int i = 0; i<3; i++){
+                token = strtok(NULL, " ,\t\n");
+                if (token == NULL) {
+                    fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
+                    exit(EXIT_FAILURE);
+                }
             }
         }
-         else if (strcmp(token, "addi") == 0 || strcmp(token, "andi") == 0 || strcmp(token, "ori") == 0 || strcmp(token, "jalr") == 0) {
+        else if (strcmp(token, "addi") == 0 || strcmp(token, "andi") == 0 || strcmp(token, "ori") == 0 || strcmp(token, "jalr") == 0) {
             token = strtok(NULL, " ,\t\n");
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
