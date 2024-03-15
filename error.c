@@ -9,6 +9,7 @@
 void checkAssemblyErrors(FILE *assemblyFile) {
     char line[MAX_LINE_LENGTH];
     int lineNumber = 0;
+    int *reg_num = malloc(sizeof(int));
 
     // Supported RISC-V opcodes
     const char *validOpcodes[] = {"add", "sub", "and", "or", "sll", "slt", "sra", "srl", "xor", "mul", "div", "rem", "lb",
@@ -19,7 +20,6 @@ void checkAssemblyErrors(FILE *assemblyFile) {
      {
         lineNumber++;
         char *token = strtok(line, " \t\n"); // Tokenize the line
-            //printf("%s \n",token);
         if (token != NULL)
         {
             if (strstr(token, "text") != 0)
@@ -31,7 +31,6 @@ void checkAssemblyErrors(FILE *assemblyFile) {
     while (fgets(line, MAX_LINE_LENGTH, assemblyFile) != NULL) {
         printf("%s \n", line);
         lineNumber++;
-        //printf("%d \n", lineNumber);
         // Check for line length
         if (strlen(line) >= MAX_LINE_LENGTH - 1 && line[MAX_LINE_LENGTH - 2] != '\n') {
             fprintf(stderr, "Error: Line %d is too long\n", lineNumber);
@@ -40,6 +39,7 @@ void checkAssemblyErrors(FILE *assemblyFile) {
 
         // Tokenize line to extract opcode and operands
         char *token = strtok(line, " ,\t\n");
+        printf("%s\n", token);
         if (token == NULL || strchr(token, '#') || strchr(token, ':') != NULL) // Ignore empty lines or comments
             continue;
 
@@ -61,77 +61,221 @@ void checkAssemblyErrors(FILE *assemblyFile) {
             strcmp(token, "or") == 0 || strcmp(token, "sll") == 0 || strcmp(token, "slt") == 0 ||
             strcmp(token, "sra") == 0 || strcmp(token, "srl") == 0 || strcmp(token, "xor") == 0 || 
             strcmp(token, "mul") == 0 || strcmp(token, "div") == 0 || strcmp(token, "rem") == 0) {
-            for(int i = 0; i<3; i++){
+            for(int j = 0; j<3; j++){
                 token = strtok(NULL, " ,\t\n");
+                printf("%s\n", token);
+                sscanf(token, "%*[^0-9]%d", reg_num);
+                printf("%d\n", *reg_num);
                 if (token == NULL) {
                     fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
+                    exit(EXIT_FAILURE);
+                }
+                else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                    fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                    exit(EXIT_FAILURE);
+                }
+                else if(*reg_num<0 || *reg_num>31){
+                    fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
                     exit(EXIT_FAILURE);
                 }
             }
         }
         else if (strcmp(token, "addi") == 0 || strcmp(token, "andi") == 0 || strcmp(token, "ori") == 0 || strcmp(token, "jalr") == 0) {
-            token = strtok(NULL, " ,\t\n");
+            token = strtok(NULL, " ,\t\n");         //operand 1
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
-            token = strtok(NULL, " ,\t\n");
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n");         //operand 2
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
-            token = strtok(NULL, " ,\t\n");
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n");         //operand 3
+            printf("%s\n", token);
+            printf("%d\n", atoi(token));
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             } 
+            else if(isalpha(token[0])){
+                fprintf(stderr, "Error: Operand should be an immediate in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(atoi(token) < -2048 || atoi(token) > 2047){
+                fprintf(stderr, "Error: Immediate is out of range in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
         }
         else if (strcmp(token, "lb") == 0 || strcmp(token, "lh") == 0 || strcmp(token, "lw") == 0 || strcmp(token, "ld") == 0  
             || strcmp(token, "sb") == 0  || strcmp(token, "sh") == 0  || strcmp(token, "sw") == 0  || strcmp(token, "sd") == 0) {
-            token = strtok(NULL, " ,\t\n()");
+            token = strtok(NULL, " ,\t\n()");           //operand 1
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
-            token = strtok(NULL, " ,\t\n()");
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n()");           //operand 2
+            printf("%s\n", token);
+            printf("%d\n", atoi(token));
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
-            token = strtok(NULL, " ,\t\n()");
+            else if(isalpha(token[0])){
+                fprintf(stderr, "Error: Operand should be an immediate in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(atoi(token) < -2048 || atoi(token) > 2047){
+                fprintf(stderr, "Error: Immediate is out of range in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n()");           //operand 3
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
         }    
         else if (strcmp(token, "beq") == 0 || strcmp(token, "bne") == 0 || strcmp(token, "blt") == 0 || strcmp(token, "bge") == 0) {
-            token = strtok(NULL, " ,\t\n");
+            token = strtok(NULL, " ,\t\n");         //operand 1
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
-            token = strtok(NULL, " ,\t\n");
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n");         //operand 2
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
-            token = strtok(NULL, " ,\t\n");
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n");         //operand 3
+            printf("%s\n", token);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
         } 
-        else if (strcmp(token, "jal") == 0 || strcmp(token, "lui") == 0 || strcmp(token, "auipc") == 0) {
-            token = strtok(NULL, " ,\t\n");
+        else if (strcmp(token, "jal") == 0) {
+            token = strtok(NULL, " ,\t\n");             //operand 1
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
-            token = strtok(NULL, " ,\t\n");
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n");             //operand 2
+            printf("%s\n", token);
             if (token == NULL) {
                 fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
                 exit(EXIT_FAILURE);
             }
+        }
+         else if (strcmp(token, "lui") == 0 || strcmp(token, "auipc") == 0) {
+            token = strtok(NULL, " ,\t\n");             //operand 1
+            printf("%s\n", token);
+            sscanf(token, "%*[^0-9]%d", reg_num);
+            printf("%d\n", *reg_num);
+            if (token == NULL) {
+                fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(strchr(token, 'x') == NULL || !isdigit(token[1])){
+                fprintf(stderr, "Error: Wrong register name in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(*reg_num<0 || *reg_num>31){
+                fprintf(stderr, "Error: Incorrect register number in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            token = strtok(NULL, " ,\t\n");             //operand 2
+            printf("%s\n", token);
+            printf("%d\n", atoi(token));
+            if (token == NULL) {
+                fprintf(stderr, "Error: Missing operand in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(isalpha(token[0])){
+                fprintf(stderr, "Error: Operand should be an immediate in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            else if(atoi(token) < 0 || atoi(token) > 1048575){
+                fprintf(stderr, "Error: Immediate is out of range in line %d\n", lineNumber);
+                exit(EXIT_FAILURE);
+            }
+            
         }
         else {
             fprintf(stderr, "Error: Unsupported instruction in line %d\n", lineNumber);
@@ -140,6 +284,7 @@ void checkAssemblyErrors(FILE *assemblyFile) {
     }
 
     printf("No errors found in the assembly code.\n");
+    free(reg_num);
 }
 
 int main() {

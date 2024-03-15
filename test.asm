@@ -6,15 +6,15 @@ hello world
 
 .text
 
-and x31,x14,x21
-sub x12,x22,x23
-addi x11,x21,100
-lw x13,98(x21)
-sb x25,0(x17)
+and x5,x14,x21
+sub x12,x22,x23 
+addi x4, x0, 569
+lw x13,98(x5)
+sb x1,0(x17)
 lui x3,1234
 jal x21,label
 label:
 
 sub x1,x2,x4
-jal x1,
+jal x, hj
 
