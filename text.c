@@ -106,9 +106,10 @@ int parse_instructions(const char *file_r,const char *file_w)
         printf("0x%08X\t",output);
         printf("0x%08X\n\n",PC);
        // printf("%s\n\n",line);
+       //fprintf(w_file,"%s\t\t\t",line);
         fprintf(w_file,"0x%08X\t\t",output);
         fprintf(w_file,"0x%08X\n\n",PC);
-     //   fprintf(w_file,"%s\n\n",buff);
+    
    
      PC +=4;
 
