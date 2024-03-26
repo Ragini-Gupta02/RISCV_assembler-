@@ -119,7 +119,57 @@ int U_format(int opcode,char* operands[])
      // printf("%d\n",imm_val);
       return instruction;
 }
+int J_format(int opcode, char* operands[],char (* label_name)[15],int label_pos[], int count,int PC)
+{
+    char* label = operands[1];
+    char* rd = operands[0];
+    int rd_val=0;
+    int imm_val=0;
+   // printf("ct=%d\n",count);
+   /* for(int i=0;i<count;i++)
+   {
+   printf("pos= %d name= %s\n",label_pos[i],label_name[i]);
+   }
+    */
 
+    for (int i = 1; i < strlen(rd); i++){          //Finding numerical value of rd
+      rd_val = rd_val * 10 + (rd[i] - '0');
+     }
+   int i=0;
+   for(i=0;i<count;i++)
+   {
+     if(strcmp(label,label_name[i])==0)
+     {
+        // printf("label_n= %s  i= %d\n",label_name[i],i);
+         break;
+     }
+   }
+   
+  int pos = label_pos[i]*4;
+   imm_val =  pos- PC;
+//printf("pos=%d  imm=%d\n\n",pos,imm_val);
+
+   int imm_20 = (imm_val >> 20) & 0x1;
+   int imm_19_12 = (imm_val >> 12) & 0xFF;
+   int imm_11 = (imm_val >> 11) & 0x1;
+   int imm_10_1 = (imm_val >> 1) & 0x3FF;
+
+    // Encode the UJ instruction
+   int instruction = 0;
+    instruction |= (imm_20 << 31);
+    instruction |= (imm_19_12 << 12);
+    instruction |= (imm_11 << 20);
+    instruction |= (imm_10_1 << 21);
+
+    // Set the opcode (JAL)
+    instruction |= (0b1101111 );
+   instruction |=  (rd_val & 0x1F) << 7;
+    return instruction;
+
+
+    
+
+}
 /*int main()
 {
     char* st[3] = {"x1","62"};

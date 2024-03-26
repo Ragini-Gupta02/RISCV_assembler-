@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "formats.h"
+#include "find_labels.h"
+
 #define MAX_LINE_LENGTH 256
  // func3, func7 and opcodes determination.
     int opcode_bin=0;
@@ -28,11 +30,18 @@ void Machine_Code(char * opcode);
     return 0;
 }*/
 
+
 int parse_instructions(const char *file_r,const char *file_w)
 {
     char line[100];
     int output = 0;
     // Open the assembly file
+        char label_name[15][15];
+        int label_pos[10];
+        int count;
+        //printf("here-%s\n",name[0]);
+        count = labels("test.asm",label_name,label_pos);
+
     FILE* r_file = fopen(file_r, "r");
     if (r_file == NULL) {
         printf("Error opening read file\n");
@@ -89,6 +98,8 @@ int parse_instructions(const char *file_r,const char *file_w)
         
         Machine_Code(operation) ;
 
+       
+
      //  printf("%s %s %s %s -%c\n",operation,operands[0],operands[1],operands[2],format);
         if(format == 'r'){
             output = R_format(opcode_bin, fun3_bin, fun7_bin, operands);
@@ -101,6 +112,9 @@ int parse_instructions(const char *file_r,const char *file_w)
         }
         else if(format == 'u'){
             output = U_format(opcode_bin, operands);
+        }
+         else if(format == 'j'){
+            output = J_format(opcode_bin, operands,label_name,label_pos,count,PC);
         }
 
         printf("0x%08X\t",output);

@@ -53,17 +53,19 @@ int labels(const char *file_r, char (*label_names)[15],int* label_pos)
             PC++;
         }
     }
+    fclose(r_file);
     return count;
 }
+/*
 int main() {
     
     // Open the assembly file
-  /*  FILE *riscv_file = fopen("test.asm", "r");
+    FILE *riscv_file = fopen("test.asm", "r");
     if (riscv_file == NULL) {
         printf("Error: Unable to open RISC-V file\n");
     }
     else
-    printf("file opened\n");*/
+    printf("file opened\n");
     char name[15][15];
     int pos[10];
     int ct;
@@ -76,4 +78,4 @@ int main() {
    }
    printf("ct= %d",ct);
   
-}
+}*/
